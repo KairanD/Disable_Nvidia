@@ -79,7 +79,9 @@
   
 # 12. Reinicie o computador.
 
-# 13. Para fins de estabilidade, tente remover as conexões.
+# Caso tenha problemas de estabilidade, continue conforme disposto abaixo.
+
+# 13. Tente remover as conexões.
   sudo echo 1 > /sys/bus/pci/devices/[código do PCI aqui]/remove
     # Para o meu exemplo (atenção à formatação):
       sudo echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
