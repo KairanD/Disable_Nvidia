@@ -8,7 +8,7 @@
 
 # 3. Descubra e anote os códigos referentes às conexões PCI.
   # Provavelmente haverá um para a placa de vídeo e outro para o chipset de áudio da placa de vídeo. Registre ambos.
-    sudo lspci | grep NVIDIA
+    lspci | grep NVIDIA
       # Para o meu exemplo:
         01:00.0 corresponde à placa de vídeo
         01:00.1 corresponde ao áudio da placa de vídeo
@@ -86,7 +86,7 @@
       sudo echo 1 > /sys/bus/pci/devices/0000\:01\:00.1/remove
       
 # 14. Verifique se a placa da Nvidia sumiu do sistema (precisa ter sumido):
-  sudo lspci | grep NVIDIA
+  lspci | grep NVIDIA
   
 # 15. Remova as conexões antes do boot:
   sudo gedit /etc/tmpfiles.d/remove_gpu_from_lspci.conf
