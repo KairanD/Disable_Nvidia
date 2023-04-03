@@ -13,11 +13,11 @@
         01:00.0 corresponde à placa de vídeo
         01:00.1 corresponde ao áudio da placa de vídeo
       
-# 4. Instale o ACPI Call:
+# 4. Instale o ACPI Call e os headers:
   # Para Ubuntu e derivados:
     sudo apt install acpi-call-dkms
   # Para Arch Linux e derivados:
-    sudo pacman -S acpi_call-dkms
+    sudo pacman -S linux-headers linux-lts-headers acpi_call-dkms
   
 # 5. Rode o modprobe:
   sudo modprobe acpi_call
@@ -75,7 +75,10 @@
       w /proc/acpi/call - - - - \\_SB.PCI0.PEG0.PEGP._OFF
       
 # 11. Reconstrua o initrams:
-  sudo update-initramfs -u -k all
+  # Para Ubuntu e derivados:
+    sudo update-initramfs -u -k all
+  # Para Arch Linux e derivados:
+    sudo mkinitcpio -P
   
 # 12. Reinicie o computador.
 
@@ -99,6 +102,9 @@
           w /sys/bus/pci/devices/0000\:01\:00.1/remove - - - - 1
           
 # 16. Reconstrua o initrams:
-  sudo update-initramfs -u -k all
+  # Para Ubuntu e derivados:
+    sudo update-initramfs -u -k all
+  # Para Arch Linux e derivados:
+    sudo mkinitcpio -P
   
 # 17. Reinicie o computador e verifique se o aquecimento e o consumo de bateria reduziram.
