@@ -1,35 +1,35 @@
-# 1. Remova todo e qualquer resquício do driver proprietário da Nvidia.
-  # Para Ubuntu e derivados:
+# 1. Remove anything related to the Nvidia proprietary driver.
+  # For Ubuntu (and derivatives):
     sudo apt autoremove --purge *nvidia*
-  # Para Arch Linux e derivados:
+  # For Arch Linux (and derivatives):
     sudo pacman -Rns *nvidia*
   
-# 2. Reinicie a máquina.
+# 2. Reboot.
 
-# 3. Descubra e anote os códigos referentes às conexões PCI.
-  # Provavelmente haverá um para a placa de vídeo e outro para o chipset de áudio da placa de vídeo. Registre ambos.
+# 3. Find and write down the adresses referring to the PCI connections.
+  # There will likely be one for the video card and one for the video card's audio chipset. Register both.
     lspci | grep NVIDIA
-      # Para o meu exemplo:
-        01:00.0 corresponde à placa de vídeo
-        01:00.1 corresponde ao áudio da placa de vídeo
+      # For example:
+        01:00.0 corresponds to the video card
+        01:00.1 corresponde to the video card's audio interface
       
-# 4. Instale o ACPI Call e os headers:
-  # Para Ubuntu e derivados:
+# 4. Install ACPI Call and headers:
+  # For Ubuntu (and derivatives):
     sudo apt install acpi-call-dkms
-  # Para Arch Linux e derivados:
+  # For Arch Linux (and derivatives):
     sudo pacman -S linux-headers linux-lts-headers acpi_call-dkms
   
-# 5. Rode o modprobe:
+# 5. Run modprobe:
   sudo modprobe acpi_call
 
-# 6. Teste as chamadas:
-  # Para Ubuntu e derivados:
+# 6. Test the calls:
+  # For Ubuntu (and derivatives):
     sudo /usr/share/doc/acpi-call-dkms/examples/turn_off_gpu.sh
-  # Para Arch Linux e derivados:
+  # For Arch Linux (and derivatives):
     sudo /usr/share/acpi_call/examples/turn_off_gpu.sh
 
-# 7. Registre a que funcionou. Procure pelo final "works" e copie o código.
-  # Por exemplo, no meu laptop seria \_SB.PCI0.PEG0.PEGP._OFF:
+# 7. Register the one that worked. Look for the ending "works" and copy the code.
+  # For example, my laptop uses \_SB.PCI0.PEG0.PEGP._OFF:
     Trying \_SB.PCI0.P0P1.VGA._OFF: failed
     Trying \_SB.PCI0.P0P2.VGA._OFF: failed
     Trying \_SB_.PCI0.OVGA.ATPX: failed
@@ -58,53 +58,51 @@
     Trying \_SB_.PCI0.PEGP.DGFX._OFF: failed
     Trying \_SB_.PCI0.VGA.PX02: failed
 
-# 8. Adicione o driver open source Nouveau à blacklist:
-  # No exemplo, utilizarei o Gedit, mas você pode optar pelo editor de texto de sua preferência (como o Nano):
+# 8. Add the Nouveau open source driver to the blacklist:
+  # I'm using Gedit, but you can choose a text editor of your choice (like Nano):
     sudo gedit /etc/modprobe.d/blacklist.conf
-      #Adicione a linha:
+      # Add the line:
        blacklist nouveau
     
-# 9. Carregue o ACPI Call:
+# 9. Load the ACPI call:
   sudo gedit /etc/modules
-    # Adicione a linha:
+    # Add the line:
       acpi_call
       
-# 10. Desative a placa de vídeo:
+# 10. Disable the dedicated video card:
   sudo gedit /etc/tmpfiles.d/acpi_call.conf
-    # Adicione a linha (substitua o código pelo que você encontrou):
+    # Add the line (replace the code with what you found):
       w /proc/acpi/call - - - - \\_SB.PCI0.PEG0.PEGP._OFF
       
-# 11. Reconstrua o initrams:
-  # Para Ubuntu e derivados:
+# 11. Rebuild initrams:
+  # For Ubuntu (and derivatives):
     sudo update-initramfs -u -k all
-  # Para Arch Linux e derivados:
+  # For Arch Linux (and derivatives):
     sudo mkinitcpio -P
   
-# 12. Reinicie o computador.
+# 12. Reboot. If it works fine, great. If there's any stability problem, see instructions below.
 
-# Caso tenha problemas de estabilidade, continue conforme disposto abaixo.
-
-# 13. Tente remover as conexões.
-  sudo echo 1 > /sys/bus/pci/devices/[código do PCI aqui]/remove
-    # Para o meu exemplo (atenção à formatação):
+# 13. Try to remove the connections:
+  sudo echo 1 > /sys/bus/pci/devices/[PCI code here]/remove
+    # For example:
       sudo echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
       sudo echo 1 > /sys/bus/pci/devices/0000\:01\:00.1/remove
       
-# 14. Verifique se a placa da Nvidia sumiu do sistema (precisa ter sumido):
+# 14. Check if the Nvidia card is gone from the list (it should be gone):
   lspci | grep NVIDIA
   
-# 15. Remova as conexões antes do boot:
+# 15. Remova connections before boot:
   sudo gedit /etc/tmpfiles.d/remove_gpu_from_lspci.conf
-    # Adicione as linhas:
+    # Add the lines:
       w /sys/bus/pci/devices/[código do PCI aqui]/remove - - - - 1
-        # Para o meu exemplo:
+        # For example:
           w /sys/bus/pci/devices/0000\:01\:00.0/remove - - - - 1
           w /sys/bus/pci/devices/0000\:01\:00.1/remove - - - - 1
           
-# 16. Reconstrua o initrams:
-  # Para Ubuntu e derivados:
+# 16. Rebuild initrams:
+  # For Ubuntu (and derivatives):
     sudo update-initramfs -u -k all
-  # Para Arch Linux e derivados:
+  # For Arch Linux (and derivatives):
     sudo mkinitcpio -P
   
-# 17. Reinicie o computador e verifique se o aquecimento e o consumo de bateria reduziram.
+# 17. Reboot and check if the heat problem and the abusive battery consumption are gone.
