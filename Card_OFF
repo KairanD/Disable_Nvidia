@@ -91,7 +91,7 @@
 # 14. Check if the Nvidia card is gone from the list (it should be gone):
   lspci | grep NVIDIA
   
-# 15. Remova connections before boot:
+# 15. Remove connections before boot:
   sudo gedit /etc/tmpfiles.d/remove_gpu_from_lspci.conf
     # Add the lines:
       w /sys/bus/pci/devices/[código do PCI aqui]/remove - - - - 1
