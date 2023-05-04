@@ -1,4 +1,4 @@
-# What is this script for?
+# What is this guide for?
 
 If you have an old laptop with Nvidia graphics (Kepler architecture or older), you'll probably find problems when trying to run up-to-date or rolling-release Linux distros with the proprietary driver. This happens because old versions of the driver are often left unsupported by Nvidia, resulting in compilation errors with newer kernel versions. Fixes are usually late.
 
